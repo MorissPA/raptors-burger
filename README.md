@@ -1,84 +1,330 @@
-# Instrukcja instalacji i konfiguracji środowiska symulacyjnego
+# Raptors Burger — Simulation Environment
 
+## Contents
 
-## 1. Wymagania systemowe
+- [1. Project Overview](#1-project-overview)
+<!--  -->
+- [2. System Requirements](#2-system-requirements)
+- [3. System Dependencies](#3-system-dependencies)
+<!--  -->
+- [4. Workspace Setup](#4-workspace-setup)
+- [5. Building the Workspace](#5-building-the-workspace)
+- [6. Running the Base Packages](#6-running-the-base-packages)
+- [7. Running the Custom Package](#7-running-the-custom-package)
+<!--  -->
+- [8. References](#8-references)
 
-Do poprawnego działania środowiska wymagane są:
-System operacyjny: Ubuntu 24.04 LTS (instalacja natywna, wirtualizowana lub WSL2).
-Środowisko bazowe: ROS 2 Jazzy Jalisco (zalecana instalacja typu `desktop`). W przypadku braku środowiska należy postępować zgodnie z [oficjalną dokumentacją ROS 2](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html).
+## 1. Project Overview
 
-## 2. Instalacja zależności
+if you are here \
+and don't know why \
+it's your problem
 
-Przed pobraniem kodu źródłowego należy zainstalować niezbędne narzędzia budowania, symulator Gazebo oraz bazowe pakiety TurtleBot3. Należy wykonać poniższe polecenia w terminalu:
+some of **those stages** \
+**can be preformed in other way** \
+so you don't need to flow them
+
+## 2. System Requirements
+
+### 2.1. Operating System
+
+Install **Ubuntu 24.04 LTS**
+
+[Ubuntu - Desktop](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview)
+
+***Where ?*** \
+(you should know)
+
+### 2.2. ROS 2 Installation
+
+Install **ROS 2 Jazzy Jalisco**
+
+[ROS 2 Jazzy — Ubuntu](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
+
+***Where ?*** \
+(you should know)
+
+### 2.3. ROS 2 Verification
+
+***Input this:***
+
+```bash
+source /opt/ros/jazzy/setup.bash
+echo "$ROS_DISTRO"
+```
+
+***Output should be this:***
+
+```text
+jazzy
+```
+
+## 3. System Dependencies
+
+### 3.1. Development Tools
+
+***Run this:***
 
 ```bash
 sudo apt update
-sudo apt install python3-colcon-common-extensions
-sudo apt install ros-jazzy-gazebo-ros-pkgs ros-jazzy-turtlebot3-msgs ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-turtlebot3-gazebo
+
+sudo apt install -y \
+    build-essential \
+    python3-colcon-common-extensions \
 ```
 
-## 3. Konfiguracja przestrzeni roboczej
+***What are those ?***
 
-Rozwiązania zadań powinny być implementowane we własnej kopii repozytorium (tzw. fork) na gałęzi simulation.
+### 3.2. NAV2 Packages
 
-Należy utworzyć przestrzeń roboczą (workspace) i pobrać repozytorium:
+***Run this:***
 
 ```bash
-mkdir -p ~/raptors_ws/src
-cd ~/raptors_ws/src
+sudo apt update
+
+sudo apt install -y \
+    ros-jazzy-navigation2 \
+    ros-jazzy-nav2-bringup
 ```
 
-#### Uwaga: Należy podmienić poniższy adres na link do własnego forka repozytorium
+***What are those ?***
+
+### 3.3. Gazebo 
+
+***Run this:***
 
 ```bash
-git clone [https://github.com/](https://github.com/)<NAZWA_UZYTKOWNIKA>/raptors-burger.git
+sudo apt update
+
+sudo apt install -y \
+    ros-jazzy-ros-gz \
+```
+
+***What are those ?***
+
+### 3.4. TurtleBot3
+
+***Run this:***
+
+```bash
+sudo apt update
+
+sudo apt install -y \
+    ros-jazzy-turtlebot3 \
+    ros-jazzy-turtlebot3-msgs \
+    ros-jazzy-turtlebot3-gazebo \
+```
+
+***What are those ?***
+
+## 4. Workspace Setup
+
+### 4.1. Create the Workspace
+
+***Run this:***
+
+```bash
+mkdir -p ~/recruitment_ws/src
+cd ~/recruitment_ws/src
+```
+
+***What it does ?***
+
+### 4.2. Fork the Repository
+
+***How ?*** \
+***(use context)***
+
+### 4.3. Clone the Repository
+
+make sure, \
+this: 
+
+```text
+https://github.com/<username>/raptors-burger.git
+```
+
+is correct
+
+---
+
+***Run this:***
+
+```bash
+cd ~/recruitment_ws/src
+
+read -rp "username: " username
+
+git clone --branch simulation \
+    "https://github.com/${username}/raptors-burger.git"
+
 cd raptors-burger
-git checkout -b rekrutacja-<imie>-<nazwisko>
 ```
 
-##4. Budowanie pakietów
+***What it does ?***
 
-Aby skompilować pakiety w przestrzeni roboczej, należy użyć narzędzia colcon z poziomu katalogu głównego (workspace):
+### 4.4. Create Branch
+
+make sure, \
+this: 
+
+```text
+recruitment_<username>_<stage>_<task_id>
+```
+
+is correct
+
+---
+
+***Run this:***
 
 ```bash
-cd ~/raptors_ws
+cd ~/recruitment_ws/src/raptors-burger
+
+read -rp "username: " username
+
+read -rp "stage: " stage
+read -rp "task_id: " task_id
+
+git switch -c "recruitment_${username}_${stage}_${task_id}"
+```
+
+***What it does ?***
+
+---
+
+***Run this:***
+
+```bash
+git branch --show-current
+```
+
+***What it does ?***
+
+
+## 5. Building the Workspace
+
+### 5.1. Source the Base Workspace
+
+***Run this:***
+
+```bash
+source /opt/ros/jazzy/setup.bash
+```
+
+***What it does ?***
+
+### 5.2. Install Project Dependencies
+
+***Run this:***
+
+```bash
+cd ~/recruitment_ws
+
+sudo rosdep init
+
+rosdep update
+
+rosdep install \
+    --from-paths src \
+    --ignore-src \
+    -r -y
+```
+
+***What it does ?***
+
+### 5.3. Build the Packages
+
+***Run this:***
+
+```bash
+cd ~/recruitment_ws
+
 colcon build --symlink-install
 ```
 
-Po zakończeniu budowania konieczne jest przeładowanie środowiska:
+***What it does ?***
+
+### 5.4. Source the Workspace
+
+***Run this:***
 
 ```bash
-source install/setup.bash
+source ~/recruitment_ws/install/setup.bash
 ```
 
-## 5. Uruchomienie symulacji
+***What it does ?***
 
-W celu uruchomienia symulacji, system wymaga zdefiniowania modelu robota poprzez zmienną środowiskową TURTLEBOT3_MODEL. Zmienną tę należy zadeklarować w każdym nowym oknie terminala lub dodać na stałe do pliku .bashrc.
+## 6. Running the Base Packages
 
-Terminal 1: Uruchomienie środowiska Gazebo
+The simulation uses the **TurtleBot3 Burger** robot model.
+
+Two terminal windows are required:
+
+- Terminal 1 — Simulation.
+- Terminal 2 — Keyboard teleoperation.
+
+### 6.1. Terminal 1 — Simulation
+
+Open a terminal and execute:
 
 ```bash
 export TURTLEBOT3_MODEL=burger
-source ~/raptors_ws/install/setup.bash
+source ~/recruitment_ws/install/setup.bash
+
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ```
 
-Terminal 2: Uruchomienie węzła sterowania (Teleop)
+This launches the simulation.
+
+### 6.2. Terminal 2 — Keyboard Teleoperation
+
+Open a terminal and execute:
 
 ```bash
 export TURTLEBOT3_MODEL=burger
-source ~/raptors_ws/install/setup.bash
+source ~/recruitment_ws/install/setup.bash
+
 ros2 run turtlebot3_teleop teleop_keyboard
 ```
 
-Sterowanie wirtualnym robotem odbywa się za pomocą klawiszy W, A, S, D, X po aktywowaniu okna Terminala 2.
+This launches the keyboard teleoperation.
 
-## 6. Konfiguracja opcjonalna (Zmienne środowiskowe)
+## 7. Running the Custom Package
 
-Aby uniknąć konieczności definiowania ścieżek oraz modelu robota przy każdym uruchomieniu terminala, zaleca się dodanie poniższych wpisów do pliku konfiguracyjnego powłoki:
+The recruitment tasks are implemented in the `raptors_recruitment` package.
+
+### 7.1. Find Available Executables
+
+***Run this:***
 
 ```bash
-echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
-echo "source ~/raptors_ws/install/setup.bash" >> ~/.bashrc
-source ~/.bashrc
+ros2 pkg executables raptors_recruitment
 ```
+
+***What it does ?***
+
+### 7.2. Run the Package
+
+***Run this:***
+
+```bash
+source ~/recruitment_ws/install/setup.bash
+
+ros2 run raptors_recruitment <executable_name>
+```
+
+***What it does ?***
+
+## 8. References
+
+- [ROS 2 Documentation](https://docs.ros.org/en/jazzy/)
+- [ROS 2 Installation](https://docs.ros.org/en/jazzy/Installation.html)
+<!--  -->
+- [NAV 2 Documentation](https://docs.nav2.org/jazzy/)
+<!--  -->
+- [Gazebo Harmonic Documentation](https://gazebosim.org/docs/harmonic/)
+- [Gazebo Harmonic Installation](https://gazebosim.org/docs/harmonic/ros_installation/)
+<!--  -->
+- [TurtleBot3 Documentation](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)
+- [TurtleBot3 Simulation Guide](https://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/)
