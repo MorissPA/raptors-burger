@@ -24,7 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'linear_velocity_publisher_node = raptors_recruitment.linear_velocity_publisher_node:main'
+            'linear_velocity_publisher_node = raptors_recruitment.linear_velocity_publisher_node:main',
+            'linear_velocity_subsciber_node = raptors_recruitment.linear_velocity_subsciber_node:main'
         ],
     },
 )
