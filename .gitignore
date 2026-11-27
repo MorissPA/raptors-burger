@@ -60,3 +60,10 @@ build-*/
 *.gch
 /.project
 .DS_Store
+.vscode
+
+#ros files
+install/
+log/
+__pycache__/
+*.egg-info/
