@@ -60,3 +60,6 @@ build-*/
 *.gch
 /.project
 .DS_Store
+
+
+.vscode
